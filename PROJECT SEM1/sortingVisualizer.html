@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Sorting Visualizer</title>
+    <style>
+        .canvas_container {
+            height: 100vh;
+        }
+        #main_canvas {
+            background-color: rgb(240, 240, 232);
+        }
+        .main_title{
+            padding-left: 50px;
+        }
+        #generate_lines{
+            margin-left: 30px;
+        }
+        #bubble_button{
+            margin-right: 1145px;
+        }
+    </style>
+</header>
+
+<body>
+    <br>
+    <nav class="navbar">
+        <h1 class="main_title">Sorting Visualizer</h1>
+        <button type="button" class="btn btn-primary btn-large" id="generate_lines">Generate New Lines</button>
+        <button type="button" class="btn btn-primary btn-large" id="bubble_button">Sort</button>
+    </nav>
+    <br><br><br><br><br>
+    <div class="canvas_container text-center">
+        <canvas id="main_canvas" height="500" width="1000"></canvas>
+    </div>
+    </canvas>
+    <script>
+        var mainCanvas = document.getElementById("main_canvas");
+        var bubbleButton = document.getElementById("bubble_button");
+        var generateLinesBtn = document.getElementById("generate_lines");
+        var ctx = mainCanvas.getContext("2d");
+        var linesArr = [];
+        var swapped;
+
+
+        function randIntFromInterval(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+
+        function createLines() {
+            var tempArr = [];
+            for (let i = 0; i < 50; i++) {
+                tempArr.push(randIntFromInterval(30.0, 400.0));
+            }
+            linesArr = tempArr.slice(0);
+        };
+
+
+        function drawLines(arr) {
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            var lineDistance = 10;
+            for (let i = 0; i < arr.length; i++) {
+                ctx.beginPath();
+                ctx.lineWidth = 10;
+                ctx.moveTo(lineDistance, 5);
+                ctx.lineTo(lineDistance, arr[i]);
+                ctx.strokeStyle = '#0000ff';
+                ctx.stroke();
+                lineDistance += 20;
+            }
+        };
+
+
+        function* bubbleSort(arr) {
+            do {
+                swapped = false;
+                for (let i = 0; i < arr.length - 1; i++) {
+                    if (arr[i] > arr[i + 1]) {
+                        let temp = arr[i];
+                        arr[i] = arr[i + 1];
+                        arr[i + 1] = temp;
+                        swapped = true;
+                        yield swapped;
+                    }
+                    console.log("y");
+                }
+            } while (swapped);
+        }
+
+        bubbleButton.addEventListener("click", function () {
+            var sort = bubbleSort(linesArr);
+
+            function anim() {
+                requestAnimationFrame(anim);
+                drawLines(linesArr);
+            }
+            setInterval(function () { sort.next(); }, 60);
+            anim();
+
+        });
+
+        generateLinesBtn.addEventListener("click", function () {
+            createLines();
+            drawLines(linesArr);
+        });
+        createLines();
+        drawLines(linesArr);
+
+    </script>
+</body>
+
+</html>
